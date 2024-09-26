@@ -1,2 +1,4 @@
-/grpc/
+/grpc/*
 /.venv/
+*.xml
+*.iml
