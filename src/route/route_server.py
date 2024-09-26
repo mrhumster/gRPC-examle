@@ -11,6 +11,7 @@ import grpc
 import route_pb2_grpc
 import route_pb2
 import route_resources
+import _credentials
 
 
 def get_feature(feature_db, point):
@@ -102,13 +103,23 @@ class RouteGuideServicer(route_pb2_grpc.RouteGuideServicer):
 
 def serve():
     """ Run server """
+
+    server_creds = grpc.ssl_server_credentials(
+        (
+            (
+                _credentials.SERVER_CERTIFICATE_KEY,
+                _credentials.SERVER_CERTIFICATE,
+            ),
+        )
+    )
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server.add_secure_port("[::]:50051", server_creds)
     route_pb2_grpc.add_RouteGuideServicer_to_server(RouteGuideServicer(), server)
-    server.add_insecure_port("[::]:50051")
+    logging.info(f"Server: {server.__str__()}")
     server.start()
     server.wait_for_termination()
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     serve()

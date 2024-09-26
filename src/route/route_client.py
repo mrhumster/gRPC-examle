@@ -5,6 +5,7 @@ import grpc
 import route_pb2
 import route_pb2_grpc
 import route_resources
+import _credentials
 
 
 def make_route_note(message, latitude, longitude):
@@ -99,7 +100,10 @@ def guide_route_chat(stub):
 
 
 def run():
-    with grpc.insecure_channel("localhost:50051") as channel:
+    channel_creds = grpc.ssl_channel_credentials(
+        _credentials.ROOT_CERTIFICATE
+    )
+    with grpc.secure_channel("localhost:50051", channel_creds) as channel:
         stub = route_pb2_grpc.RouteGuideStub(channel)
         print("-------------- GetFeature --------------")
         guide_get_feature(stub)
