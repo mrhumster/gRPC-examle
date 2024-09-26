@@ -1,0 +1,4 @@
+grpcio==1.67.0rc1
+grpcio-tools==1.67.0rc1
+protobuf==5.28.2
+setuptools==75.1.0
