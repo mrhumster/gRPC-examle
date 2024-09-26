@@ -51,7 +51,7 @@ class RouteGuideServicer(route_pb2_grpc.RouteGuideServicer):
 
     def GetFeature(self, request, context):
         feature = get_feature(self.db, request)
-        if feature in None:
+        if feature is None:
             return route_pb2.Feature(name="", location=request)
         else:
             return feature
@@ -101,15 +101,14 @@ class RouteGuideServicer(route_pb2_grpc.RouteGuideServicer):
 
 
 def serve():
+    """ Run server """
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    route_pb2_grpc.add_RouteGuideServicer_to_server(
-        RouteGuideServicer(), server
-    )
+    route_pb2_grpc.add_RouteGuideServicer_to_server(RouteGuideServicer(), server)
     server.add_insecure_port("[::]:50051")
     server.start()
     server.wait_for_termination()
 
 
 if __name__ == "__main__":
-    logging.basicConfig()
+    logging.basicConfig(level=logging.INFO)
     serve()
